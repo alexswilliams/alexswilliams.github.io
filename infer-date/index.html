@@ -8,11 +8,12 @@
 
 <body>
     <h1>Date Inference Diagram</h1>
-    <h2 id="subtitle">New Diagram</h2>
+    <h2><span id="subtitle">New Diagram</span><input type="text" size="40" id="subtitle-textbox"> <span
+            id="subtitle-edit">✏️</span><span id="subtitle-done">✔️</span></h2>
 
     <canvas id="timeline" width="800px" height="500px"></canvas>
 
-    <fieldset id="events">
+    <fieldset>
         <legend>Known Events</legend>
         <table>
             <thead id="events-legend">
@@ -20,31 +21,32 @@
                 <td>Age</td>
                 <td>Description</td>
                 <td>Colour</td>
-                <td>Controls</td>
+                <td>Delete?</td>
             </thead>
             <tbody id="all-events">
             </tbody>
         </table>
     </fieldset>
-    <fieldset id="newEvent">
+    <fieldset>
         <legend>New Event</legend>
         <div>
-            <label for="neweventdate">Event Date: </label>
-            <input id="neweventdate" type="text" placeholder="e.g. 1 Aug 1925" size="12">
+            <label for="new-event-date">Event Date: </label>
+            <input id="new-event-date" type="text" placeholder="e.g. 1 Aug 1925" size="12"
+                pattern="([1-9]|[12][0-9]|30|31) ([jJ]an|[fF]eb|[mM]ar|[aA]pr|[mM]ay|[jJ]un|[jJ]ul|[aA]ug|[sS]ep|[oO]ct|[nN]ov|[dD]ec) [12][0-9]{3}">
         </div>
         <div>
-            <label for="neweventage">Age on Event Date: </label>
-            <input id="neweventage" type="number" size="4">
+            <label for="new-event-age">Age on Event Date: </label>
+            <input id="new-event-age" type="number" size="4" min="0">
         </div>
         <div>
-            <label for="neweventdesc">Description: </label>
-            <input id="neweventdesc" type="text" size="40">
+            <label for="new-event-desc">Description: </label>
+            <input id="new-event-desc" type="text" size="40">
         </div>
         <div>
-            <label for="neweventcolour">Colour: </label>
-            <input id="neweventcolour" type="color" value="#cccccc">
+            <label for="new-event-colour">Colour: </label>
+            <input id="new-event-colour" type="color" value="#cccccc">
         </div>
-        <button>Add</button>
+        <button id="add">Add</button>
     </fieldset>
     <hr>
     <h2>Sample Data</h2>
@@ -52,8 +54,8 @@
     <button id="single">Single Event</button>
     <button id="two-over">Two Overlapping</button>
     <button id="two-non-over">Two Distinct</button>
-    <button id="real-life-eg">Real Example</button>
-    <button id="real-life-eg-2">Real Example 2</button>
+    <button id="real-life-eg">Real Example: John Jones</button>
+    <button id="real-life-eg-2">Real Example: Edith Davies</button>
 </body>
 <style>
     body {
@@ -82,8 +84,32 @@
         border: 1px solid black;
     }
 
-    fieldset#newEvent div {
+    fieldset div {
         margin-block-end: 0.5em;
+    }
+
+    input,
+    button {
+        padding: 5px 10px;
+    }
+
+    label {
+        margin-right: 1em;
+    }
+
+    input:invalid {
+        box-shadow: 0 0 3px 4px rgb(255, 200, 200);
+    }
+
+    span#subtitle-edit,
+    span#subtitle-done {
+        font-size: x-small;
+        cursor: pointer;
+    }
+
+    input#subtitle-textbox,
+    span#subtitle-done {
+        display: none;
     }
 </style>
 <script src="timeline.js"></script>
