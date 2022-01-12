@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Date Inference Diagrammer</title>
 </head>
 
@@ -10,6 +11,8 @@
     <h1>Date Inference Diagram</h1>
     <h2><span id="subtitle">New Diagram</span><input type="text" size="40" id="subtitle-textbox"> <span
             id="subtitle-edit">✏️</span><span id="subtitle-done">✔️</span></h2>
+
+    <div class="summary">The following diagram shows the possible dates of birth a person can have, given their ages at defined dates throughout their life.</div>
 
     <canvas id="timeline" width="800px" height="500px"></canvas>
 
@@ -73,15 +76,27 @@
     }
 
     canvas {
-        margin: auto;
-        border: 1px solid black
+        margin: 1em;
+        border: 0;
     }
 
     fieldset {
         width: fit-content;
-        margin-top: 1em;
+        margin-top: 2em;
         background-color: ivory;
         border: 1px solid black;
+    }
+
+    .summary {
+        border-left: 4px solid grey;
+        padding-left: 1em;
+        margin-left: 1em;
+        width: 40em;
+        max-width: 80%;
+    }
+
+    hr {
+        margin-top: 3em;
     }
 
     fieldset div {

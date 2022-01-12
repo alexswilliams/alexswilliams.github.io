@@ -96,6 +96,8 @@ function renderEvent(
     context.fillStyle = event.colour || 'rgb(192,192,192)'
     context.fillRect(left, top, width, BAR_HEIGHT)
     context.strokeRect(left, top, width, BAR_HEIGHT)
+    context.fillStyle = 'rgba(0,0,0,0.05)'
+    context.fillRect(left, TIMELINE_HEAD_HEIGHT, width, BAR_HEIGHT)
     context.restore()
 
     context.save()

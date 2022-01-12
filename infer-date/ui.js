@@ -247,19 +247,19 @@ if (window.location.hash != '') {
     renderTimelineFromEventList()
 }
 
-document.getElementById("blank").addEventListener("click", () => updateListAndRenderTimeline('Sample: Blank', []))
-document.getElementById("single").addEventListener("click", () => updateListAndRenderTimeline('Sample: A Single Event', [
+document.getElementById("blank").addEventListener("click", () => updateListAndRenderTimeline('Blank', []))
+document.getElementById("single").addEventListener("click", () => updateListAndRenderTimeline('A Single Event', [
     { date: '4 May 2007', age: 10, description: 'A single event', colour: '#0099cc' }
 ]))
-document.getElementById("two-over").addEventListener("click", () => updateListAndRenderTimeline('Sample: Two Overlapping Events', [
+document.getElementById("two-over").addEventListener("click", () => updateListAndRenderTimeline('Two Overlapping Events', [
     { date: '12 Apr 2007', age: 10, description: 'An event', colour: '#0099cc' },
     { date: '30 Aug 2008', age: 11, description: 'Another event', colour: '#ff9900' },
 ]))
-document.getElementById("two-non-over").addEventListener("click", () => updateListAndRenderTimeline('Sample: Two Distinct Events', [
+document.getElementById("two-non-over").addEventListener("click", () => updateListAndRenderTimeline('Two Distinct Events', [
     { date: '12 Apr 2007', age: 10, description: 'An event', colour: '#0099cc' },
     { date: '30 Mar 2008', age: 12, description: 'Another event', colour: '#ff9900' },
 ]))
-document.getElementById("real-life-eg").addEventListener("click", () => updateListAndRenderTimeline('Sample: John Jones', [
+document.getElementById("real-life-eg").addEventListener("click", () => updateListAndRenderTimeline('John Jones', [
     { date: '3 Apr 1881', age: 7, description: '1881 Census', colour: '#ffcc66' },
     { date: '5 Apr 1891', age: 16, description: '1891 Census', colour: '#ffcc66' },
     { date: '1 Aug 1896', age: 21, description: 'Marriage Certificate', colour: '#66cc66' },
@@ -267,7 +267,7 @@ document.getElementById("real-life-eg").addEventListener("click", () => updateLi
     { date: '2 Apr 1911', age: 35, description: '1911 Census', colour: '#ffcc66' },
     { date: '18 Jun 1946', age: 72, description: 'Death Certificate', colour: '#99ccff' },
 ]))
-document.getElementById("real-life-eg-2").addEventListener("click", () => updateListAndRenderTimeline('Sample: Edith Davies', [
+document.getElementById("real-life-eg-2").addEventListener("click", () => updateListAndRenderTimeline('Edith Davies', [
     { date: '1 Aug 1896', age: 19, description: 'Marriage Certificate', colour: '#66cc66' },
     { date: '31 Mar 1901', age: 22, description: '1901 Census', colour: '#ffcc66' },
     { date: '2 Apr 1911', age: 33, description: '1911 Census', colour: '#ffcc66' },
