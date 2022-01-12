@@ -168,35 +168,69 @@ function renderTimelineFromEventList() {
 }
 
 
+const compressions = { 'Census': '#C', 'Certificate': '#T', 'Marriage': '#M', 'Death': '#D', 'Burial': '#B', 'Record': '#R', '1841': '#1', '1851': '#2', '1861': '#3', '1871': '#4', '1881': '#5', '1891': '#6', '1901': '#7', '1911': '#8', '1921': '#9' }
+const compressionsForwards = {}
+const compressionsBackwards = {}
+for ([k, v] of Object.entries(compressions)) {
+    compressionsForwards[k] = v
+    compressionsForwards[k.toLowerCase()] = v.toLowerCase()
+    compressionsBackwards[v] = k
+    compressionsBackwards[v.toLowerCase()] = k.toLowerCase()
+}
+function compressText(/** @type {string} */ t) {
+    return Object.entries(compressionsForwards).reduce((acc, [a, r]) => acc.replace(a, r), t)
+}
+function decompressText(/** @type {string} */ t) {
+    return Object.entries(compressionsBackwards).reduce((acc, [a, r]) => acc.replace(a, r), t)
+}
+
+function compressDate(/** @type {string} */ d) {
+    const date = parseDate(d)
+    return date.comparable
+}
+function decompressDate(/** @type {number} */ d) {
+    const day = d & 0xff
+    const month = (d >> 8) & 0xff
+    const year = (d >> 16) & 0xffff
+    if (!isValidDate({ day, month, year, comparable: d })) throw Error('Invalid Date', day, month, year, d)
+    return `${day} ${monthNumberToName[month]} ${year}`
+}
+
 function updateLocationHash() {
     if (title == 'New Diagram' && eventList.length == 0) {
         window.location.hash = ''
         return
     }
-    const hash = JSON.stringify({ t: title, e: eventList.map(it => ({ d: it.date, a: it.age, t: it.description, c: it.colour })) })
-    window.location.hash = btoa(unescape(encodeURIComponent(hash)))
+    const hashData = { t: title, e: eventList.map(it => ({ d: compressDate(it.date), a: it.age, t: compressText(it.description), c: it.colour })) }
+
+    const asJson = btoa(unescape(encodeURIComponent(JSON.stringify(hashData))))
+    const asMsgPack = msgpack.encode(hashData).toString('base64')
+    window.location.hash = asMsgPack
+    console.log('json vs msgpack', asJson.length, asMsgPack.length)
 }
 
 
 if (window.location.hash != '') {
     try {
-        const hash = JSON.parse(decodeURIComponent(escape(atob(window.location.hash.substring(1)))))
+        // const hash = JSON.parse(decodeURIComponent(escape(atob(window.location.hash.substring(1)))))
+        const hashArray = Uint8Array.from(atob(window.location.hash.substring(1)), c => c.charCodeAt(0))
+        const hash = msgpack.decode(hashArray)
+
         if (!Object.keys(hash).includes('e')) throw Error('Hash missing e field')
         if (hash.t != undefined && typeof hash.t != 'string') throw Error('Hash title field was not a string')
         const newTitle = hash.t || 'New Diagram'
         const newEventList = hash.e.map(event => {
             const keys = Object.keys(event)
             if (!keys.includes('d')) throw Error('Event missing d field')
-            if (typeof event.d != 'string' || !/^([1-9]|[12][0-9]|30|31) ([jJ]an|[fF]eb|[mM]ar|[aA]pr|[mM]ay|[jJ]un|[jJ]ul|[aA]ug|[sS]ep|[oO]ct|[nN]ov|[dD]ec) [12][0-9]{3}$/.test(event.d))
-                throw Error('Event date not a properly formatted date string')
+            if (typeof event.d != 'number' || (event.d <= 0)) throw Error('Event date not a valid date')
             if (!keys.includes('a')) throw Error('Event missing a field')
             if (typeof event.a != 'number' || !Number.isInteger(event.a)) throw Error('Event age not a whole number')
             if (event.t != undefined && typeof event.t != 'string') throw Error('Event title field was not a string')
             if (event.c != undefined && (typeof event.c != 'string' || !/^[#][0-9a-f]{6}$/.test(event.c))) throw Error('Event colour field was not a hex colour string')
             return {
-                date: event.d,
+                date: decompressDate(event.d),
                 age: event.a,
-                description: event.t,
+                description: decompressText(event.t),
                 colour: event.c,
             }
         })

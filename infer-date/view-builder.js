@@ -1,7 +1,7 @@
 const monthNameToNumber = Object.freeze({ 'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12 })
 const monthNumberToName = Object.freeze({ 1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec' })
 
-/** @typedef {{year:number, month:number, day:number}} LocalDate */
+/** @typedef {{year:number, month:number, day:number, comparable:number}} LocalDate */
 /** @type {(string)=>LocalDate} */
 function parseDate(/** @type {string} */ input) {
     const parts = input.split(' ')
@@ -9,7 +9,14 @@ function parseDate(/** @type {string} */ input) {
     const month = monthNameToNumber[parts[1].toLowerCase()]
     const year = +parts[2]
     if (year <= 1752) throw Error("Dates not supported before 1752 ce (TODO)")
-    return { year, month, day }
+    return newDate(year, month, day)
+}
+
+function dateAsComparable(year, month, day) {
+    return ((year << 16) | (month << 8) | day)
+}
+function newDate(year, month, day) {
+    return { year, month, day, comparable: dateAsComparable(year, month, day) }
 }
 
 function isGregorianLeapYear(/** @type {number} */ year) {
@@ -20,16 +27,16 @@ function isGregorianLeapYear(/** @type {number} */ year) {
 /** @type {(LocalDate)=>LocalDate} */
 function addOneDay(/** @type {LocalDate} */ date) {
     if (date.year <= 1752) throw Error("Dates not supported before 1752 ce (TODO)")
-    if (date.day == 31 && date.month == 12) return { year: date.year + 1, month: 1, day: 1 }
-    if (date.day == 31 && [1, 3, 5, 6, 8, 10].includes(date.month)) return { ...date, month: date.month + 1, day: 1 }
-    if (date.day == 30 && [4, 7, 9, 11].includes(date.month)) return { ...date, month: date.month + 1, day: 1 }
+    if (date.day == 31 && date.month == 12) return newDate(date.year + 1, 1, 1)
+    if (date.day == 31 && [1, 3, 5, 6, 8, 10].includes(date.month)) newDate(date.year, date.month+1, 1)
+    if (date.day == 30 && [4, 7, 9, 11].includes(date.month)) newDate(date.year, date.month+1, 1)
     if (date.month == 2) {
         const isLeapYear = isGregorianLeapYear(date.year)
-        if (isLeapYear && date.day == 29) return { ...date, month: date.month + 1, day: 1 }
-        if (!isLeapYear && date.day == 28) return { ...date, month: date.month + 1, day: 1 }
-        return { ...date, day: date.day + 1 }
+        if (isLeapYear && date.day == 29) return newDate(date.year, date.month+1, 1)
+        if (!isLeapYear && date.day == 28) return newDate(date.year, date.month+1, 1)
+        return newDate(date.year, date.month, date.day + 1)
     }
-    return { ...date, day: date.day + 1 }
+    return newDate(date.year, date.month, date.day + 1)
 }
 
 function daysInMonth(/** @type {LocalDate} */ date) {
@@ -38,6 +45,13 @@ function daysInMonth(/** @type {LocalDate} */ date) {
     if ([4, 7, 9, 11].includes(date.month)) return 30
     if (isGregorianLeapYear(date.year)) return 29
     return 28
+}
+
+function isValidDate(/** @type {LocalDate} */ date) {
+    if (date.day <= 0 || date.month <= 0 || date.month > 12) return false
+    if (date.year <= 1752) return false // TODO
+    if (date.day > daysInMonth(date)) return false
+    return true
 }
 
 function dateBefore(a, b) {
