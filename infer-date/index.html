@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Date Inference Diagrammer</title>
+</head>
+
+<body>
+    <h1>Date Inference Diagram</h1>
+    <h2 id="subtitle">New Diagram</h2>
+
+    <canvas id="timeline" width="800px" height="500px"></canvas>
+
+    <fieldset id="events">
+        <legend>Known Events</legend>
+        <table>
+            <thead id="events-legend">
+                <td>Event Date</td>
+                <td>Age</td>
+                <td>Description</td>
+                <td>Colour</td>
+                <td>Controls</td>
+            </thead>
+            <tbody id="all-events">
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset id="newEvent">
+        <legend>New Event</legend>
+        <div>
+            <label for="neweventdate">Event Date: </label>
+            <input id="neweventdate" type="text" placeholder="e.g. 1 Aug 1925" size="12">
+        </div>
+        <div>
+            <label for="neweventage">Age on Event Date: </label>
+            <input id="neweventage" type="number" size="4">
+        </div>
+        <div>
+            <label for="neweventdesc">Description: </label>
+            <input id="neweventdesc" type="text" size="40">
+        </div>
+        <div>
+            <label for="neweventcolour">Colour: </label>
+            <input id="neweventcolour" type="color" value="#cccccc">
+        </div>
+        <button>Add</button>
+    </fieldset>
+    <hr>
+    <h2>Sample Data</h2>
+    <button id="blank">Blank</button>
+    <button id="single">Single Event</button>
+    <button id="two-over">Two Overlapping</button>
+    <button id="two-non-over">Two Distinct</button>
+    <button id="real-life-eg">Real Example</button>
+    <button id="real-life-eg-2">Real Example 2</button>
+</body>
+<style>
+    body {
+        font-family: sans-serif;
+        padding-left: 1em;
+    }
+
+    h1 {
+        margin-block: 0em;
+    }
+
+    h2 {
+        color: grey;
+        margin-block-start: 0em;
+    }
+
+    canvas {
+        margin: auto;
+        border: 1px solid black
+    }
+
+    fieldset {
+        width: fit-content;
+        margin-top: 1em;
+        background-color: ivory;
+        border: 1px solid black;
+    }
+
+    fieldset#newEvent div {
+        margin-block-end: 0.5em;
+    }
+</style>
+<script src="timeline.js"></script>
+<script src="view-builder.js"></script>
+<script src="ui.js"></script>
+
+</html>
