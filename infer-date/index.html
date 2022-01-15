@@ -12,7 +12,9 @@
     <h2><span id="subtitle">New Diagram</span><input type="text" size="40" id="subtitle-textbox"> <span
             id="subtitle-edit">✏️</span><span id="subtitle-done">✔️</span></h2>
 
-    <div class="summary">The following diagram shows the possible dates of birth a person can have, given their ages at defined dates throughout their life.</div>
+    <div class="summary"><p>The following diagram shows the possible dates of birth a person can have, given their ages at
+        defined dates throughout their life.
+    <p>Information entered here stored in the URL - if you change anything, remember to update any links with the new URL.</div>
 
     <canvas id="timeline" width="800px" height="500px"></canvas>
 
@@ -36,6 +38,17 @@
             <label for="new-event-date">Event Date: </label>
             <input id="new-event-date" type="text" placeholder="e.g. 1 Aug 1925" size="12"
                 pattern="([1-9]|[12][0-9]|30|31) ([jJ]an|[fF]eb|[mM]ar|[aA]pr|[mM]ay|[jJ]un|[jJ]ul|[aA]ug|[sS]ep|[oO]ct|[nN]ov|[dD]ec) [12][0-9]{3}">
+            <span class="presets" id="census-years">Censuses:
+                <button id="1841">1841</button>
+                <button id="1851">1851</button>
+                <button id="1861">1861</button>
+                <button id="1871">1871</button>
+                <button id="1881">1881</button>
+                <button id="1891">1891</button>
+                <button id="1901">1901</button>
+                <button id="1911">1911</button>
+                <button id="1921">1921</button>
+                <button id="1939">1939</button></span>
         </div>
         <div>
             <label for="new-event-age">Age on Event Date: </label>
@@ -48,6 +61,12 @@
         <div>
             <label for="new-event-colour">Colour: </label>
             <input id="new-event-colour" type="color" value="#cccccc">
+            <span class="presets" id="entry-colours">Suggestions:
+                <button id="census">Census</button>
+                <button id="marriage">Marriage</button>
+                <button id="death">Death</button>
+                <button id="burial">Burial</button>
+            </span>
         </div>
         <button id="add">Add</button>
     </fieldset>
@@ -125,6 +144,33 @@
     input#subtitle-textbox,
     span#subtitle-done {
         display: none;
+    }
+
+    span.presets {
+        font-size: small;
+        margin-left: 1em;
+    }
+
+    span.presets button {
+        font-size: small;
+        padding: 0.2em;
+
+    }
+
+    button#census {
+        background-color: #ffcc66;
+    }
+
+    button#marriage {
+        background-color: #66cc66;
+    }
+
+    button#death {
+        background-color: #99ccff;
+    }
+
+    button#burial {
+        background-color: #cc9999;
     }
 </style>
 <script src="timeline.js"></script>

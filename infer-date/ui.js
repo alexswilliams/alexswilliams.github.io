@@ -31,6 +31,40 @@ titleTextbox.addEventListener('keypress', (ev) => { if (ev.key == 'Enter') updat
 titleDone.addEventListener('click', () => updateTitle(titleTextbox.value))
 
 
+const censusDates = Object.freeze({
+    '1841': '6 Jun 1841',
+    '1851': '30 Mar 1851',
+    '1861': '7 Apr 1861',
+    '1871': '2 Apr 1871',
+    '1881': '3 Apr 1881',
+    '1891': '5 Apr 1891',
+    '1901': '31 Mar 1901',
+    '1911': '2 Apr 1911',
+    '1921': '19 Jun 1921',
+    '1939': '29 Sep 1939'
+})
+Array.prototype.forEach.call(
+    document.getElementById('census-years').getElementsByTagName('button'),
+    btn => btn.addEventListener('click', function () { document.getElementById('new-event-date').value = censusDates[btn.textContent] }))
+
+// Borrowed from stack overflow - it seems colour inputs can't handle rgb(...), only hex
+function componentToHex(c) {
+    const hex = c.toString(16);
+    return hex.length == 1 ? '0' + hex : hex;
+}
+function rgbToHex(rgb) {
+    const matches = /^rgb\(([0-9]{1,3}),[ ]?([0-9]{1,3}),[ ]?([0-9]{1,3})\)$/i.exec(rgb)
+    return "#" + componentToHex(+matches[1]) + componentToHex(+matches[2]) + componentToHex(+matches[3]);
+}
+Array.prototype.forEach.call(
+    document.getElementById('entry-colours').getElementsByTagName('button'),
+    btn => btn.addEventListener('click', function () {
+        const asHex = rgbToHex(getComputedStyle(btn).backgroundColor)
+        console.log(getComputedStyle(btn).backgroundColor, asHex)
+        document.getElementById('new-event-colour').value = asHex
+    }))
+
+
 /** @typedef {{date: string, age: number, description: string, colour: string}} PointInTimeEvent */
 /** @type {PointInTimeEvent[]} */
 let eventList = []
@@ -246,6 +280,8 @@ if (window.location.hash != '') {
     updateKnownEventsList()
     renderTimelineFromEventList()
 }
+
+
 
 document.getElementById("blank").addEventListener("click", () => updateListAndRenderTimeline('Blank', []))
 document.getElementById("single").addEventListener("click", () => updateListAndRenderTimeline('A Single Event', [
