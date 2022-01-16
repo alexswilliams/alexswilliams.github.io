@@ -1,4 +1,5 @@
-let title = 'New Diagram'
+const defaultTitle = 'New Diagram'
+let title = defaultTitle
 
 /** @type {HTMLSpanElement} */
 const docTitle = document.getElementById('subtitle')
@@ -8,6 +9,15 @@ const titleTextbox = document.getElementById('subtitle-textbox')
 const titleEdit = document.getElementById('subtitle-edit')
 /** @type {HTMLSpanElement} */
 const titleDone = document.getElementById('subtitle-done')
+
+/** @type {HTMLInputElement} */
+const newDateElem = document.getElementById('new-event-date')
+/** @type {HTMLInputElement} */
+const newAgeElem = document.getElementById('new-event-age')
+/** @type {HTMLInputElement} */
+const newDescElem = document.getElementById('new-event-desc')
+/** @type {HTMLInputElement} */
+const newColourElem = document.getElementById('new-event-colour')
 
 titleEdit.addEventListener('click', () => {
     titleEdit.style.display = 'none'
@@ -30,7 +40,6 @@ function updateTitle(newTitle) {
 titleTextbox.addEventListener('keypress', (ev) => { if (ev.key == 'Enter') updateTitle(titleTextbox.value) })
 titleDone.addEventListener('click', () => updateTitle(titleTextbox.value))
 
-
 const censusDates = Object.freeze({
     '1841': '6 Jun 1841',
     '1851': '30 Mar 1851',
@@ -45,7 +54,11 @@ const censusDates = Object.freeze({
 })
 Array.prototype.forEach.call(
     document.getElementById('census-years').getElementsByTagName('button'),
-    btn => btn.addEventListener('click', function () { document.getElementById('new-event-date').value = censusDates[btn.textContent] }))
+    btn => btn.addEventListener('click', function () {
+        newDateElem.value = censusDates[btn.textContent]
+        newDescElem.value = `${btn.textContent} ${btn.textContent == '1939' ? 'Register' : 'Census'}`
+        newColourElem.value = rgbToHex(getComputedStyle(document.getElementById('census')).backgroundColor)
+    }))
 
 // Borrowed from stack overflow - it seems colour inputs can't handle rgb(...), only hex
 function componentToHex(c) {
@@ -58,11 +71,7 @@ function rgbToHex(rgb) {
 }
 Array.prototype.forEach.call(
     document.getElementById('entry-colours').getElementsByTagName('button'),
-    btn => btn.addEventListener('click', function () {
-        const asHex = rgbToHex(getComputedStyle(btn).backgroundColor)
-        console.log(getComputedStyle(btn).backgroundColor, asHex)
-        document.getElementById('new-event-colour').value = asHex
-    }))
+    btn => btn.addEventListener('click', () => newColourElem.value = rgbToHex(getComputedStyle(btn).backgroundColor)))
 
 
 /** @typedef {{date: string, age: number, description: string, colour: string}} PointInTimeEvent */
@@ -99,6 +108,7 @@ function createEventForm(/** @type {PointInTimeEvent} */ event, /** @type {numbe
     date.id = "date-" + n
     date.value = event.date
     date.pattern = "([1-9]|[12][0-9]|30|31) ([jJ]an|[fF]eb|[mM]ar|[aA]pr|[mM]ay|[jJ]un|[jJ]ul|[aA]ug|[sS]ep|[oO]ct|[nN]ov|[dD]ec) [12][0-9]{3}"
+    date.required = true
     date.addEventListener('input', dateChangeHandler)
 
     const ageTd = tr.appendChild(document.createElement("td"))
@@ -107,6 +117,7 @@ function createEventForm(/** @type {PointInTimeEvent} */ event, /** @type {numbe
     age.size = 4
     age.id = "age-" + n
     age.min = 0
+    age.required = true
     age.value = event.age
     age.addEventListener('input', ageChangeHandler)
 
@@ -148,8 +159,10 @@ function descriptionChangeHandler() {
     renderTimelineFromEventList()
 }
 function ageChangeHandler() {
-    eventList[+(this.id.split('-')[1])].age = +this.value
-    renderTimelineFromEventList()
+    if (this.checkValidity()) {
+        eventList[+(this.id.split('-')[1])].age = +this.value
+        renderTimelineFromEventList()
+    }
 }
 function dateChangeHandler() {
     if (this.checkValidity()) {
@@ -158,28 +171,26 @@ function dateChangeHandler() {
     }
 }
 
+function clearNewEventForm() {
+    newDateElem.value = ''
+    newAgeElem.value = ''
+    newDescElem.value = ''
+    newColourElem.value = '#cccccc'
+}
 
 document.getElementById('add').addEventListener('click', () => {
-    const newDate = document.getElementById('new-event-date')
-    const newAge = document.getElementById('new-event-age')
-    const newDesc = document.getElementById('new-event-desc')
-    const newColour = document.getElementById('new-event-colour')
-    if (newDate.checkValidity()) {
+    if (newDateElem.checkValidity() && newAgeElem.checkValidity()) {
         const toAdd = {
-            date: newDate.value,
-            age: +(newAge.value),
-            description: newDesc.value,
-            colour: newColour.value
+            date: newDateElem.value,
+            age: +(newAgeElem.value),
+            description: newDescElem.value,
+            colour: newColourElem.value
         }
         eventList.push(toAdd)
         eventList.sort((a, b) => (dateBefore(parseDate(a.date), parseDate(b.date))) ? -1 : 1)
         updateKnownEventsList()
         renderTimelineFromEventList()
-
-        newDate.value = ''
-        newAge.value = ''
-        newDesc.value = ''
-        newColour.value = '#cccccc'
+        clearNewEventForm()
     }
 })
 
@@ -202,7 +213,46 @@ function renderTimelineFromEventList() {
 }
 
 
-const compressions = { 'Census': '#C', 'Certificate': '#T', 'Marriage': '#M', 'Death': '#D', 'Burial': '#B', 'Record': '#R', '1841': '#1', '1851': '#2', '1861': '#3', '1871': '#4', '1881': '#5', '1891': '#6', '1901': '#7', '1911': '#8', '1921': '#9' }
+const compressions = {
+    defaultTitle: '#Q',
+    'Census': '#C',
+    'Register': '#G',
+    'Certificate': '#T',
+    'Marriage': '#M',
+    'Death': '#D',
+    'Burial': '#B',
+    'Record': '#R',
+    '1841': '#1',
+    '1851': '#2',
+    '1861': '#3',
+    '1871': '#4',
+    '1881': '#5',
+    '1891': '#6',
+    '1901': '#7',
+    '1911': '#8',
+    '1921': '#9',
+    'Marland': '^01',
+    'Hawkins': '^02',
+    'Hartley': '^03',
+    'Ruffley': '^04',
+    'Beaumont': '^05',
+    'Adams': '^06',
+    'Jones': '^07',
+    'Millar': '^08',
+    'Taylor': '^09',
+    'Wilson': '^10',
+    'Hudson': '^11',
+    'Davies': '^12',
+    'James': '$01',
+    'Elizabeth': '$02',
+    'Henry': '$03',
+    'Joseph': '$04',
+    'Alexander': '$05',
+    'George': '$06',
+    'William': '$07',
+    'Mary Ann': '$08',
+    'Hannah': '$09',
+}
 const compressionsForwards = {}
 const compressionsBackwards = {}
 for ([k, v] of Object.entries(compressions)) {
@@ -214,7 +264,8 @@ for ([k, v] of Object.entries(compressions)) {
 function compressText(/** @type {string} */ t) {
     return Object.entries(compressionsForwards).reduce((acc, [a, r]) => acc.replace(a, r), t)
 }
-function decompressText(/** @type {string} */ t) {
+function decompressText(/** @type {string | undefined} */ t) {
+    if (t == undefined) return undefined
     return Object.entries(compressionsBackwards).reduce((acc, [a, r]) => acc.replace(a, r), t)
 }
 
@@ -231,11 +282,11 @@ function decompressDate(/** @type {number} */ d) {
 }
 
 function updateLocationHash() {
-    if (title == 'New Diagram' && eventList.length == 0) {
+    if (title == defaultTitle && eventList.length == 0) {
         window.location.hash = ''
         return
     }
-    const hashData = { t: title, e: eventList.map(it => ({ d: compressDate(it.date), a: it.age, t: compressText(it.description), c: it.colour })) }
+    const hashData = { t: compressText(title), e: eventList.map(it => ({ d: compressDate(it.date), a: it.age, t: compressText(it.description), c: it.colour })) }
 
     const asJson = btoa(unescape(encodeURIComponent(JSON.stringify(hashData))))
     const asMsgPack = msgpack.encode(hashData).toString('base64')
@@ -252,7 +303,7 @@ if (window.location.hash != '') {
 
         if (!Object.keys(hash).includes('e')) throw Error('Hash missing e field')
         if (hash.t != undefined && typeof hash.t != 'string') throw Error('Hash title field was not a string')
-        const newTitle = hash.t || 'New Diagram'
+        const newTitle = decompressText(hash.t) || defaultTitle
         const newEventList = hash.e.map(event => {
             const keys = Object.keys(event)
             if (!keys.includes('d')) throw Error('Event missing d field')
@@ -281,7 +332,10 @@ if (window.location.hash != '') {
     renderTimelineFromEventList()
 }
 
-
+document.getElementById('clear').addEventListener('click', () => {
+    updateListAndRenderTimeline(defaultTitle, [])
+    clearNewEventForm()
+})
 
 document.getElementById("blank").addEventListener("click", () => updateListAndRenderTimeline('Blank', []))
 document.getElementById("single").addEventListener("click", () => updateListAndRenderTimeline('A Single Event', [

@@ -20,6 +20,7 @@
 
     <fieldset>
         <legend>Known Events</legend>
+        <button id="clear">Clear All</button>
         <table>
             <thead id="events-legend">
                 <td>Event Date</td>
@@ -36,7 +37,7 @@
         <legend>New Event</legend>
         <div>
             <label for="new-event-date">Event Date: </label>
-            <input id="new-event-date" type="text" placeholder="e.g. 1 Aug 1925" size="12"
+            <input id="new-event-date" type="text" placeholder="e.g. 1 Aug 1925" size="12" required
                 pattern="([1-9]|[12][0-9]|30|31) ([jJ]an|[fF]eb|[mM]ar|[aA]pr|[mM]ay|[jJ]un|[jJ]ul|[aA]ug|[sS]ep|[oO]ct|[nN]ov|[dD]ec) [12][0-9]{3}">
             <span class="presets" id="census-years">Censuses:
                 <button id="1841">1841</button>
@@ -52,7 +53,7 @@
         </div>
         <div>
             <label for="new-event-age">Age on Event Date: </label>
-            <input id="new-event-age" type="number" size="4" min="0">
+            <input id="new-event-age" type="number" size="4" min="0" required>
         </div>
         <div>
             <label for="new-event-desc">Description: </label>

@@ -105,7 +105,7 @@ function findEventsForDateRanges(dateRanges, extents) {
         let endMonthInExtents = monthsIntoExtents(r.end, extents)
 
         return {
-            title: `[${r.event.age} in ${r.event.date}]  ${r.event.description}`,
+            title: `[${r.event.age}yo on ${r.event.date}]  ${r.event.description}`,
             startPct: (startMonthInExtents + startDayPct) / totalMonths,
             endPct: (endMonthInExtents + endDayPct) / totalMonths,
             colour: r.event.colour
